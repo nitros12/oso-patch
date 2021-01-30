@@ -93,8 +93,10 @@ def _authorize_query(query: Query) -> Optional[Query]:
         if authorized_filter is not None:
             queries.append(base_query.filter(authorized_filter))
 
-    # if there's only one query, don't generate a union
-    if len(queries) == 1:
+    # if there's zero or one query, don't generate a union
+    if not queries:
+        q = base_query
+    elif len(queries) == 1:
         q = queries[0]
     else:
         q = Query.union(*queries)

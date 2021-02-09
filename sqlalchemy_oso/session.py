@@ -89,9 +89,9 @@ def _authorize_query(query: Query) -> Optional[Query]:
         if entity is None:
             continue
 
-        authorized_filter = authorize_model(oso, user, action, session, entity)
-        if authorized_filter is not None:
-            queries.append(base_query.filter(authorized_filter))
+        authorized_filters = authorize_model(oso, user, action, session, entity)
+        for filter in authorized_filters:
+            queries.append(base_query.filter(filter))
 
     # if there's zero or one query, don't generate a union
     if not queries:

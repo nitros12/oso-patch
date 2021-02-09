@@ -53,7 +53,7 @@ def authorize_model(oso: Oso, actor, action, session: Session, model):
     )
     results = oso.query_rule("allow", actor, action, partial_resource)
 
-    combined_filter = None
+    filters = []
     has_result = False
     for result in results:
         has_result = True
@@ -62,12 +62,9 @@ def authorize_model(oso: Oso, actor, action, session: Session, model):
         filter = partial_to_filter(
             resource_partial, session, model, get_model=oso.get_class
         )
-        if combined_filter is None:
-            combined_filter = filter
-        else:
-            combined_filter = combined_filter | filter
+        filters.append(filter)
 
     if not has_result:
-        return sql.false()
+        return [sql.false()]
 
-    return combined_filter
+    return filters
